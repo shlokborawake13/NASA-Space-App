@@ -89,12 +89,4 @@ if st.sidebar.button("Classify Object"):
     except Exception as e:
         st.error(f"An error occurred during prediction: {e}")
 
-#### 4. Deploy the App
 
-1.  Go to [Streamlit Community Cloud](https://share.streamlit.io/).
-2.  Click **"New app"** and connect your GitHub account.
-3.  Select your new repository.
-4.  Ensure the main file path is set to `app.py`.
-5.  Click **"Deploy!"**.
-
-Your second prototype will be live in a few minutes.
