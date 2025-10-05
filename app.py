@@ -12,7 +12,7 @@ def download_file_from_github(url, local_filename):
         return
     try:
         response = requests.get(url)
-        response.raise_for_status() # Raise an exception for bad status codes
+        response.raise_for_status()
         with open(local_filename, 'wb') as f:
             f.write(response.content)
     except requests.exceptions.RequestException as e:
@@ -43,8 +43,6 @@ Enter the object's properties in the sidebar to get a prediction.
 
 # --- DEFINE THE INPUT FEATURES IN THE SIDEBAR ---
 st.sidebar.header("Object Input Features")
-
-# Based on the notebook, these are the key features for the model
 user_inputs = {
     'pl_orbper': st.sidebar.number_input('Orbital Period (days)', value=8.88, format="%.4f"),
     'pl_rade': st.sidebar.number_input('Planetary Radius (Earth radii)', value=1.99, format="%.2f"),
@@ -57,21 +55,21 @@ user_inputs = {
 # --- PREDICTION LOGIC ---
 if st.sidebar.button("Classify Object"):
     try:
-        # Get the feature names the model was trained on
+        # ✅ ROBUST FIX: Get class names and feature names directly from the model object.
+        class_names = model.classes_
         expected_features = model.feature_name_
         
-        # Create a DataFrame with the correct features and order
+        # Create a DataFrame with the correct features and order.
         input_df = pd.DataFrame([user_inputs], columns=expected_features)
 
         st.write("### Input Features:")
         st.dataframe(input_df)
 
-        # Make prediction (the model expects a DataFrame directly)
+        # Make prediction.
         prediction_numeric = model.predict(input_df)
         prediction_proba = model.predict_proba(input_df)
         
-        # Define the class names based on the notebook's label encoding
-        class_names = ['CONFIRMED', 'FALSE POSITIVE']
+        # Get the predicted class name using the numeric prediction as an index.
         result_name = class_names[prediction_numeric[0]]
 
         st.write("---")
@@ -83,10 +81,9 @@ if st.sidebar.button("Classify Object"):
             st.error(f"The model predicts: **{result_name}**")
 
         st.write("### Prediction Confidence")
+        # The shape of prediction_proba and the length of class_names will now match perfectly.
         proba_df = pd.DataFrame(prediction_proba, columns=class_names, index=['Confidence'])
         st.dataframe(proba_df.style.format("{:.2%}"))
 
     except Exception as e:
         st.error(f"An error occurred during prediction: {e}")
-
-
