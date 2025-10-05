@@ -89,7 +89,6 @@ if st.sidebar.button("Classify Object"):
     except Exception as e:
         st.error(f"An error occurred during prediction: {e}")
 
----
 #### 4. Deploy the App
 With all the files in your GitHub repository, you can now deploy your app.
 
